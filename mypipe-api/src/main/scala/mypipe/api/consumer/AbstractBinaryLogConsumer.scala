@@ -48,15 +48,17 @@ trait BinaryLogConsumer[BinaryLogEvent, BinaryLogPosition] extends BinaryLogCons
   protected def decodeEvent(binaryLogEvent: BinaryLogEvent): Option[Event]
 
   /** Given a database and table name, returns a valid Table instance
-   *  if possible.
+   *  if possible. Should also reload table metainformation; this method
+   *  is called on ALTER events.
    *  @param database the database name
    *  @param table the table name
    *  @return a Table instance or None if not possible
    */
-  protected def findTable(database: String, table: String): Option[Table]
+  protected def refreshTable(database: String, table: String): Option[Table]
 
   /** Given an TableMapEvent event, returns a valid Table instance
-   *  if possible.
+   *  if possible. Should also perform any necessary internal remapping to
+   *  comply with TableMapEvent.
    *  @param event the TableMapEvent who's database, table name, and table ID will be used to build the Table
    *  @return a Table instance or None if not possible
    */
