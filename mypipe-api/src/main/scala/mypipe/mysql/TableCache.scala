@@ -21,52 +21,42 @@ import akka.util.Timeout
 class TableCache(hostname: String, port: Int, username: String, password: String) {
   protected val system = ActorSystem("mypipe")
   protected implicit val ec = system.dispatcher
-  protected val tablesById = scala.collection.mutable.HashMap[Long, Table]()
-  protected val tableNameToId = scala.collection.mutable.HashMap[String, Long]()
   protected val dbMetadata = system.actorOf(MySQLMetadataManager.props(hostname, port, username, Some(password)), s"DBMetadataActor-$hostname:$port")
   protected val log = LoggerFactory.getLogger(getClass)
 
+  case class TableKey(database: String, tableName: String)
+  protected val tablesByKey = scala.collection.mutable.HashMap[TableKey, Table]()
+  protected val tableIdToKey = scala.collection.mutable.HashMap[Long, TableKey]()
+
   def getTable(tableId: Long): Option[Table] = {
-    tablesById.get(tableId)
+    tableIdToKey.get(tableId).flatMap(tablesByKey.get(_))
   }
 
-  def refreshTable(tableId: Long): Option[Table] = {
-    // FIXME: if the table is not in the map we can't refresh it.
-    tablesById.get(tableId).flatMap(refreshTable)
+  def getTable(database: String, tableName: String): Option[Table] = {
+    tablesByKey.get(TableKey(database, tableName))
   }
 
   def refreshTable(database: String, table: String): Option[Table] = {
     // FIXME: if the table is not in the map we can't refresh it.
-    tableNameToId.get(database + table).flatMap(refreshTable)
+    tablesByKey.get(TableKey(database, table)).flatMap(table => {
+      Some(addTable(table.id, table.db, table.name, flushTableCache = true))
+    })
   }
 
-  def refreshTable(table: Table): Option[Table] = {
-    // FIXME: if the table is not in the map we can't refresh it.
-    Some(addTable(table.id, table.db, table.name, flushCache = true))
+  def addTableByEvent(ev: TableMapEvent): Table = {
+    addTable(ev.tableId, ev.database, ev.tableName, flushTableCache = false)
   }
 
-  def addTableByEvent(ev: TableMapEvent, flushCache: Boolean = false): Table = {
-    addTable(ev.tableId, ev.database, ev.tableName, flushCache)
-  }
-
-  def addTable(tableId: Long, database: String, tableName: String, flushCache: Boolean): Table = {
-
-    if (flushCache) {
-
-      val table = lookupTable(tableId, database, tableName)
-      tablesById.put(tableId, table)
-      tableNameToId.put(table.db + table.name, table.id)
-      table
-
-    } else {
-
-      tablesById.getOrElseUpdate(tableId, {
-        val table = lookupTable(tableId, database, tableName)
-        tableNameToId.put(table.db + table.name, table.id)
-        table
-      })
-
+  def addTable(tableId: Long, database: String, tableName: String, flushTableCache: Boolean): Table = {
+    val key = TableKey(database, tableName)
+    if (flushTableCache) {
+      tablesByKey.remove(key)
     }
+    tableIdToKey.put(tableId, key)
+    tablesByKey.getOrElseUpdate(key, {
+      val table = lookupTable(tableId, database, tableName)
+      table
+    })
   }
 
   private def lookupTable(tableId: Long, database: String, tableName: String): Table = {
