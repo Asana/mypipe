@@ -49,7 +49,7 @@
     <jetty-servlet-api.version>2.5-20081211</jetty-servlet-api.version>
     <jopt-simple.version>4.1</jopt-simple.version>
     <junit.version>4.10</junit.version>
-    <netty.version>3.4.0.Final</netty.version>
+    <netty.version>3.10.6.Final</netty.version>
     <paranamer.version>2.3</paranamer.version>
     <protobuf.version>2.4.1</protobuf.version>
     <thrift.version>0.7.0</thrift.version>
@@ -120,7 +120,7 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore />
+                    <ignore/>
                   </action>
                 </pluginExecution>
                 <pluginExecution>
@@ -133,7 +133,7 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore />
+                    <ignore/>
                   </action>
                 </pluginExecution>
                 <pluginExecution>
@@ -148,7 +148,7 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore />
+                    <ignore/>
                   </action>
                 </pluginExecution>
               </pluginExecutions>
