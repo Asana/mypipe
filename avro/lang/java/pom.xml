@@ -78,7 +78,7 @@
     <plugin-plugin.version>2.9</plugin-plugin.version>
     <source-plugin.version>2.1.2</source-plugin.version>
     <surefire-plugin.version>2.12</surefire-plugin.version>
-    <file-management.version>1.2.1</file-management.version>
+    <file-management.version>3.0.0</file-management.version>
     <shade-plugin.version>1.5</shade-plugin.version>
     <archetype-plugin.version>2.2</archetype-plugin.version>
   </properties>
@@ -120,7 +120,7 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore />
+                    <ignore/>
                   </action>
                 </pluginExecution>
                 <pluginExecution>
@@ -133,7 +133,7 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore />
+                    <ignore/>
                   </action>
                 </pluginExecution>
                 <pluginExecution>
@@ -148,7 +148,7 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore />
+                    <ignore/>
                   </action>
                 </pluginExecution>
               </pluginExecutions>
